@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AgriVision | Wheat Disease AI</title>
+    <meta name="description" content="AI-Based Wheat Leaf Disease Detection App">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Rounded" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="glass-header">
+            <div class="header-content">
+                <span class="material-icons-rounded logo-icon">eco</span>
+                <h1>AgriVision</h1>
+            </div>
+            <div class="header-actions">
+                <select id="language-select" class="lang-picker">
+                    <option value="en">English</option>
+                    <option value="ta">தமிழ் (Tamil)</option>
+                    <option value="hi">हिन्दी (Hindi)</option>
+                </select>
+                <div class="status-indicator" id="model-status">
+                    <span class="pulse-dot red"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Hero / Scan Section -->
+            <section class="scan-section">
+                <div class="camera-card">
+                    <div class="image-preview-container" id="image-container">
+                        <div class="placeholder-content" id="placeholder">
+                            <span class="material-icons-rounded">photo_camera</span>
+                            <p id="txt-placeholder">Capture or upload a wheat leaf</p>
+                        </div>
+                        <img id="leaf-image" alt="Wheat leaf preview" style="display: none;">
+                        <canvas id="crop-canvas" style="display: none;"></canvas>
+                        
+                        <!-- Scanning Overlay -->
+                        <div class="scan-overlay" id="scan-overlay" style="display: none;">
+                            <div class="scan-line"></div>
+                            <p id="txt-analyzing">Analyzing Leaf...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="btn-camera">
+                        <span class="material-icons-rounded">camera_alt</span>
+                        <span id="txt-btn-camera">Camera</span>
+                    </button>
+                    <button class="btn btn-secondary" id="btn-gallery">
+                        <span class="material-icons-rounded">image</span>
+                        <span id="txt-btn-gallery">Gallery</span>
+                    </button>
+                    <!-- Separate hidden file inputs -->
+                    <input type="file" id="camera-input" accept="image/*" capture="environment" style="display: none;">
+                    <input type="file" id="gallery-input" accept="image/*" style="display: none;">
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section glass-card" id="results-card" style="display: none;">
+                <div class="result-header">
+                    <h2 id="txt-analysis-result">Analysis Result</h2>
+                    <button class="btn-icon" id="btn-speak" title="Read Aloud">
+                        <span class="material-icons-rounded">volume_up</span>
+                    </button>
+                </div>
+                
+                <div class="diagnosis-box">
+                    <div class="disease-name" id="disease-name">Healthy</div>
+                    <div class="confidence-bar-container">
+                        <div class="confidence-label">
+                            <span id="txt-confidence">Confidence</span>
+                            <span id="confidence-value">98%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="confidence-fill" style="width: 98%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="treatment-box">
+                    <h3><span class="material-icons-rounded">healing</span> <span id="txt-treatment-advice">Treatment Advice</span></h3>
+                    <p id="treatment-text">No disease found. Continue regular monitoring.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Only register Service Worker if not opening directly via file:// protocol
+        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered', reg))
+                    .catch(err => console.log('Service Worker registration failed', err));
+            });
+        }
+    </script>
+</body>
+</html>
